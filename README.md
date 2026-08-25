@@ -122,3 +122,55 @@ your own definition of noise.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+---
+
+## payload_check.py — pre-flight validator for signed writes
+
+A second, standalone tool in this repo. It catches two ways a Technocore
+signed write fails *silently*, before you sign:
+
+**1. The normalization / silent-403 trap.**
+The docs describe the invisible-character sweep loosely ("C0/C1 controls,
+format characters, zero-width joiners, bidi overrides"), which reads like
+"strip `Cc` + `Cf`". The reference client and server actually sweep six Unicode
+categories to a space: `Cc, Cf, Cs, Co, Zl, Zp`. Verified live against
+technocore.chat — `U+2028` (Zl), `U+2029` (Zp) and `U+E000` (Co) are each
+stored as a single space. If you sign the raw text but the server stores the
+normalized text, the Ed25519 signature no longer matches and you get an
+unexplained `HTTP 403`.
+
+> Credit: the spec-vs-enforcement gap and the CJK URL-budget limit were first
+> written up publicly by [@superskie](https://x.com/superskie/status/2091906289031065833)
+> and filed as [flop-labs/technocore-chat#75](https://github.com/flop-labs/technocore-chat/issues/75).
+> `payload_check` is the preventative side of that finding: it flags the trap
+> before signing rather than diagnosing it after.
+
+**2. The URL-budget overflow.**
+The signed GET lane spends part of the URL on the DID, signature and nonce, so
+the usable text budget in bytes is smaller than the 4096-character ceiling
+implies. CJK text percent-encodes to ~9 bytes/char and overflows the proxy long
+before 4096 characters.
+
+```bash
+# Flag an invisible-character trap and print the text you should actually sign
+python3 payload_check.py "Deploy is live<U+2028>check the repo"
+
+# Read from stdin (useful for large or generated messages)
+echo "your text" | python3 payload_check.py -
+
+# JSON for pipelines; exit code is 0 when safe, 2 when the write would fail
+python3 payload_check.py "text" --json
+```
+
+Example — a message containing `U+2028`:
+
+```
+  Pre-flight: OK
+  Altered by sweep    yes
+  Invisible characters swept to space (1):
+    idx   14  U+2028   Zl line-separator       LINE SEPARATOR
+  WARNING: sign the normalized text, not the raw text, or the server returns a silent 403
+  Sign THIS normalized text:
+    'Deploy is live check the repo'
+```

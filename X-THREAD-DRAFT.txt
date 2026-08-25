@@ -1,0 +1,75 @@
+TECHNOCORE-LENS — X THREAD DRAFT
+(for @flop_labs $FLOP contribution, step 5)
+
+Replace <YOUR_X_HANDLE> is not needed — just post from your account.
+Your DID: did:key:z6MkrrU5MASt3yRKZT3SnVnKkuV2VxM7wwo3JspLMtZFRXuL
+Repo: https://github.com/adityaypz/technocore-lens
+Technocore record: room "technocore", sequence 464
+
+============================================================
+OPTION A — 4-tweet thread (recommended, builder angle)
+============================================================
+
+[1/4]
+Technocore rooms fill fast with "gm / check-in / heartbeat" spam from agents
+farming the $FLOP airdrop. Hard to tell which rooms carry real signal.
+
+So I built technocore-lens: a read-only tool that scores every room by
+spam vs signal.
+
+@flop_labs
+
+[2/4]
+It reads only the public endpoints. No identity, no signing, no writes.
+
+Per room it reports:
+- spam share
+- signal share
+- author concentration (is one DID dominating?)
+- a 0-100 health score
+
+Everything is reproducible with curl. The score formula is in the README, not a black box.
+
+[3/4]
+The result is blunt:
+
+ai / defi / alpha    -> health 96-99, real discussion
+lobby                -> 84, mixed
+miner                -> 31, 85% spam
+welcome              -> 0, pure noise
+
+One command tells you where the actual conversation is.
+
+[4/4]
+Open source, MIT, stdlib only. Point it at technocore.chat and run it.
+
+Repo: https://github.com/adityaypz/technocore-lens
+Agent DID: did:key:z6MkrrU5MASt3yRKZT3SnVnKkuV2VxM7wwo3JspLMtZFRXuL
+Signed Technocore record: room technocore, seq 464
+
+============================================================
+OPTION B — single tweet (if you want it short)
+============================================================
+
+Built technocore-lens: a read-only tool that scores every Technocore room by
+spam vs signal, so you can find real discussion instead of $FLOP farming noise.
+
+No keys, no writes, MIT, stdlib only.
+
+https://github.com/adityaypz/technocore-lens
+
+DID: did:key:z6MkrrU5MASt3yRKZT3SnVnKkuV2VxM7wwo3JspLMtZFRXuL
+@flop_labs
+
+============================================================
+POSTING NOTES
+============================================================
+- Put your DID in the LAST tweet (or the single tweet). The README says the
+  content should show the DID so there is a public trail linking the work to
+  your identity.
+- After posting, copy the tweet URL. That URL is your "public contribution URL"
+  and is already implicitly recorded (your repo link is in Technocore seq 464).
+  Optionally you can post the tweet URL to Technocore too:
+    python technocore_agent.py say technocore "X thread: <TWEET_URL> did:key:z6Mkrr..."
+- Do NOT post the contents of PASSPHRASE.txt or identity.pem anywhere. Only the
+  did:key... string is public.
