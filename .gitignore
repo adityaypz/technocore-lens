@@ -15,3 +15,6 @@ identity.pem
 .vscode/
 .DS_Store
 Thumbs.db
+
+# local drafts, not for the repo
+X-THREAD-DRAFT.txt
